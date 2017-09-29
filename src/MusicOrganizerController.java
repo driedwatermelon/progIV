@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 public class MusicOrganizerController {
 
@@ -51,14 +52,9 @@ public class MusicOrganizerController {
 		// TODO: Add your code here
 		
 		// Set Album title, create a new Album and designate root folder.
-		Album newAlbum = new Album(view.promptForAlbumName());
-		Album selectedAlbum = view.getSelectedAlbum();
-		if (selectedAlbum != null) {
-			selectedAlbum.addSubAlbum(newAlbum);
-		} else {
-			root.addSubAlbum(newAlbum);
-		}
-		view.onAlbumAdded(newAlbum);
+		Album album = new Album(view.promptForAlbumName());
+		root.addSubAlbum(album);
+		
 	}
 	
 	/**
@@ -68,7 +64,6 @@ public class MusicOrganizerController {
 		// TODO: Add your code here
 		Album toDelete = view.getSelectedAlbum();
 		root.removeSubAlbum(toDelete);
-		view.onAlbumRemoved(toDelete);
 	}
 	
 	/**

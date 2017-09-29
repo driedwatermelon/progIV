@@ -160,8 +160,9 @@ public class MusicOrganizerWindow extends JFrame {
 	 * @return the selected Album
 	 */
 	public Album getSelectedAlbum() {
-		
-		return (Album) getSelectedTreeNode().getUserObject();
+		Object o = getSelectedTreeNode().getUserObject();
+		if (o == null) return null;
+		return (Album) o;
 	}
 	
 	
