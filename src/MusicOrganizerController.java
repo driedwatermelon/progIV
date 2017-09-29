@@ -1,5 +1,9 @@
+import java.io.File;
+
 import java.util.List;
 import java.util.Set;
+
+import javax.swing.JFileChooser;
 
 public class MusicOrganizerController {
 
@@ -59,6 +63,20 @@ public class MusicOrganizerController {
 	 */
 	public void addSoundClips(){ //TODO Update parameters if needed
 		// TODO: Add your code here
+		
+		JFileChooser chooser = new JFileChooser();
+		chooser.setMultiSelectionEnabled(true);
+
+		// Show the dialog; wait until dialog is closed
+		chooser.showOpenDialog(view);
+
+		// Retrieve the selected files.
+		File[] test = chooser.getSelectedFiles();
+		for (int i=0; i < test.length; i++) {
+			SoundClip toAdd = new SoundClip(test[i]);
+			root.addSoundClip(toAdd);
+		}
+		
 	}
 	
 	/**
@@ -66,6 +84,11 @@ public class MusicOrganizerController {
 	 */
 	public void removeSoundClips(){ //TODO Update parameters if needed
 		// TODO: Add your code here
+		List<SoundClip> l = view.getSelectedSoundClips();
+		for (int i=0;i<l.size();i++) {
+			root.removeSoundClip(l.get(i));
+		}
+		
 	}
 	
 	/**
