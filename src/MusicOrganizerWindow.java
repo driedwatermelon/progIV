@@ -143,7 +143,7 @@ public class MusicOrganizerWindow extends JFrame {
 	 * selection.
 	 */
 	private DefaultMutableTreeNode getSelectedTreeNode() {
-		return  (DefaultMutableTreeNode) albumTree.getLastSelectedPathComponent();
+		return (DefaultMutableTreeNode) albumTree.getLastSelectedPathComponent();
 	}
 	
 	
@@ -160,9 +160,9 @@ public class MusicOrganizerWindow extends JFrame {
 	 * @return the selected Album
 	 */
 	public Album getSelectedAlbum() {
-		Object o = getSelectedTreeNode().getUserObject();
-		if (o == null) return null;
-		return (Album) o;
+		DefaultMutableTreeNode dmt = getSelectedTreeNode();
+		if (dmt == null) return null;
+		return (Album) dmt.getUserObject();
 	}
 	
 	

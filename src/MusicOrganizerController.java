@@ -11,25 +11,25 @@ public class MusicOrganizerController {
 	private MusicOrganizerWindow view;
 	private SoundClipBlockingQueue queue;
 	private Album root;
-	
+
 	public MusicOrganizerController() {
-		
+
 		// TODO: Create the root album for all sound clips
 		root = new Album("All Sound Clips");
-		
+
 		// Create the View in Model-View-Controller
 		view = new MusicOrganizerWindow(this);
-		
+
 		// Create the blocking queue
 		queue = new SoundClipBlockingQueue();
-		
+
 		// Create a separate thread for the sound clip player and start it
 		(new Thread(new SoundClipPlayer(queue))).start();
 	}
 
 	/**
-	 * Load the sound clips found in all subfolders of a path on disk. If path is not
-	 * an actual folder on disk, has no effect.
+	 * Load the sound clips found in all subfolders of a path on disk. If path is
+	 * not an actual folder on disk, has no effect.
 	 */
 	public Set<SoundClip> loadSoundClips(String path) {
 		Set<SoundClip> clips = SoundClipLoader.loadSoundClips(path);
@@ -37,40 +37,47 @@ public class MusicOrganizerController {
 
 		return clips;
 	}
-	
+
 	/**
 	 * Returns the root album
 	 */
-	public Album getRootAlbum(){
+	public Album getRootAlbum() {
 		return root;
 	}
-	
+
 	/**
 	 * Adds an album to the Music Organizer
 	 */
-	public void addNewAlbum(){ //TODO Update parameters if needed - e.g. you might want to give the currently selected album as parameter
+	public void addNewAlbum() { // TODO Update parameters if needed - e.g. you might want to give the currently
+								// selected album as parameter
 		// TODO: Add your code here
-		
+
 		// Set Album title, create a new Album and designate root folder.
-		Album album = new Album(view.promptForAlbumName());
-		root.addSubAlbum(album);
-		
+		Album newAlbum = new Album(view.promptForAlbumName());
+		Album selectedAlbum = view.getSelectedAlbum();
+		if (selectedAlbum != null) {
+			selectedAlbum.addSubAlbum(newAlbum);
+		} else {
+			root.addSubAlbum(newAlbum);
+		}
+		view.onAlbumAdded(newAlbum);
 	}
-	
+
 	/**
 	 * Removes an album from the Music Organizer
 	 */
-	public void deleteAlbum(){ //TODO Update parameters if needed
+	public void deleteAlbum() { // TODO Update parameters if needed
 		// TODO: Add your code here
 		Album toDelete = view.getSelectedAlbum();
 		root.removeSubAlbum(toDelete);
+		view.onAlbumRemoved(toDelete); 
 	}
-	
+
 	/**
 	 * Adds sound clips to an album
 	 */
-	public void addSoundClips(){ //TODO Update parameters if needed
-		
+	public void addSoundClips() { // TODO Update parameters if needed
+
 		// Initiate a filechooser instance.
 		JFileChooser chooser = new JFileChooser();
 		chooser.setMultiSelectionEnabled(true);
@@ -80,38 +87,37 @@ public class MusicOrganizerController {
 
 		// Retrieve the selected files.
 		File[] test = chooser.getSelectedFiles();
-		
+
 		// Add the selected files to the root album.
-		for (int i=0; i < test.length; i++) {
+		for (int i = 0; i < test.length; i++) {
 			SoundClip toAdd = new SoundClip(test[i]);
 			root.addSoundClip(toAdd);
-		}		
+		}
 	}
-	
+
 	/**
 	 * Removes sound clips from an album
 	 */
-	public void removeSoundClips(){ //TODO Update parameters if needed
-		
+	public void removeSoundClips() { // TODO Update parameters if needed
+
 		// Get the list of selected sound clips.
 		List<SoundClip> l = view.getSelectedSoundClips();
-		
+
 		// Loop through the list and remove them from the Album one by one.
-		for (int i=0;i<l.size();i++) {
+		for (int i = 0; i < l.size(); i++) {
 			root.removeSoundClip(l.get(i));
 		}
-		
+
 	}
-	
+
 	/**
-	 * Puts the selected sound clips on the queue and lets
-	 * the sound clip player thread play them. Essentially, when
-	 * this method is called, the selected sound clips in the 
-	 * SoundClipTable are played.
+	 * Puts the selected sound clips on the queue and lets the sound clip player
+	 * thread play them. Essentially, when this method is called, the selected sound
+	 * clips in the SoundClipTable are played.
 	 */
-	public void playSoundClips(){
+	public void playSoundClips() {
 		List<SoundClip> l = view.getSelectedSoundClips();
-		for(int i=0;i<l.size();i++)
+		for (int i = 0; i < l.size(); i++)
 			queue.enqueue(l.get(i));
 	}
 }
