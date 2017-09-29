@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 public class MusicOrganizerController {
 
@@ -49,6 +50,11 @@ public class MusicOrganizerController {
 	 */
 	public void addNewAlbum(){ //TODO Update parameters if needed - e.g. you might want to give the currently selected album as parameter
 		// TODO: Add your code here
+		
+		// Set Album title, create a new Album and designate root folder.
+		Album album = new Album(view.promptForAlbumName());
+		root.addSubAlbum(album);
+		
 	}
 	
 	/**
@@ -56,6 +62,8 @@ public class MusicOrganizerController {
 	 */
 	public void deleteAlbum(){ //TODO Update parameters if needed
 		// TODO: Add your code here
+		Album toDelete = view.getSelectedAlbum();
+		root.removeSubAlbum(toDelete);
 	}
 	
 	/**
