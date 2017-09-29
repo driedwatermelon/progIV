@@ -62,16 +62,18 @@ public class MusicOrganizerController {
 	 * Adds sound clips to an album
 	 */
 	public void addSoundClips(){ //TODO Update parameters if needed
-		// TODO: Add your code here
 		
+		// Initiate a filechooser instance.
 		JFileChooser chooser = new JFileChooser();
 		chooser.setMultiSelectionEnabled(true);
 
-		// Show the dialog; wait until dialog is closed
+		// Show the dialog; wait until dialog is closed.
 		chooser.showOpenDialog(view);
 
 		// Retrieve the selected files.
 		File[] test = chooser.getSelectedFiles();
+		
+		// Add the selected files to the root album.
 		for (int i=0; i < test.length; i++) {
 			SoundClip toAdd = new SoundClip(test[i]);
 			root.addSoundClip(toAdd);
@@ -82,8 +84,11 @@ public class MusicOrganizerController {
 	 * Removes sound clips from an album
 	 */
 	public void removeSoundClips(){ //TODO Update parameters if needed
-		// TODO: Add your code here
+		
+		// Get the list of selected sound clips.
 		List<SoundClip> l = view.getSelectedSoundClips();
+		
+		// Loop through the list and remove them from the Album one by one.
 		for (int i=0;i<l.size();i++) {
 			root.removeSoundClip(l.get(i));
 		}
