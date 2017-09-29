@@ -54,7 +54,7 @@ public class MusicOrganizerController {
 
 		// Set Album title, create a new Album and designate root folder.
 		String name = view.promptForAlbumName();
-		if (name == null) return;
+		if (name == null||name.equals("")) return;
 		Album newAlbum = new Album(name);
 		Album selectedAlbum = view.getSelectedAlbum();
 		if (selectedAlbum != null) {
@@ -79,6 +79,12 @@ public class MusicOrganizerController {
 	 * Adds sound clips to an album
 	 */
 	public void addSoundClips() { // TODO Update parameters if needed
+		
+		// Set parent album
+		Album selectedAlbum = view.getSelectedAlbum();
+		if (selectedAlbum != null) {} else {
+			selectedAlbum = root;
+		}
 
 		// Initiate a filechooser instance.
 		JFileChooser chooser = new JFileChooser();
@@ -93,9 +99,11 @@ public class MusicOrganizerController {
 		// Add the selected files to the root album.
 		for (int i = 0; i < test.length; i++) {
 			SoundClip toAdd = new SoundClip(test[i]);
-			root.addSoundClip(toAdd);
+			selectedAlbum.addSoundClip(toAdd);
 		}
+		view.onClipsUpdated();
 	}
+	
 
 	/**
 	 * Removes sound clips from an album
@@ -104,11 +112,17 @@ public class MusicOrganizerController {
 
 		// Get the list of selected sound clips.
 		List<SoundClip> l = view.getSelectedSoundClips();
+		Album selectedAlbum = view.getSelectedAlbum();
+		if (selectedAlbum != null) {} else {
+			selectedAlbum = root;
+		}
 
 		// Loop through the list and remove them from the Album one by one.
 		for (int i = 0; i < l.size(); i++) {
-			root.removeSoundClip(l.get(i));
+			selectedAlbum.removeSoundClip(l.get(i));
 		}
+		
+		view.onClipsUpdated();
 
 	}
 
