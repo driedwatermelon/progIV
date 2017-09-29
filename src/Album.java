@@ -13,7 +13,19 @@ public class Album {
 		assert name != null;
 		assert !name.isEmpty();
 		this.name = name;
-		assert this.name == name;
+		assert invariant();
+	}
+	
+	private boolean invariant() {
+		if (name.isEmpty()) return false;
+		
+		if (parentAlbum != null && !parentAlbum.getSubAlbums().contains(this)) return false;
+		
+		for (Album subAlbum : subAlbums) {
+			if (subAlbum.getParent() != this) return false;
+		}
+		
+		return true;
 	}
 
 	public String getName() {
@@ -24,18 +36,17 @@ public class Album {
 		assert name != null;
 		assert !name.isEmpty();
 		this.name = name;
-		assert this.name == name;
+		assert invariant();
 	}
 
 	public Album getParent() {
 		return parentAlbum;
 	}
 
-	public void setParent(Album parentAlbum) {
+	private void setParent(Album parentAlbum) {
 		// Ingen "assert parentAlbum != null" eftersom 
 		// root-albumet inte har en "parent".
 		this.parentAlbum = parentAlbum;
-		assert this.parentAlbum == parentAlbum;
 	}
 
 	public Set<Album> getSubAlbums() {
@@ -46,7 +57,9 @@ public class Album {
 	public void addSubAlbum(Album toAdd) {
 		assert toAdd != null;
 		subAlbums.add(toAdd);
+		toAdd.setParent(this);
 		assert subAlbums.contains(toAdd);
+		assert invariant();
 	}
 
 	// Tar bort ett sub-album ur detta album.
@@ -54,6 +67,7 @@ public class Album {
 		assert toRemove != null;
 		subAlbums.remove(toRemove);
 		assert !subAlbums.contains(toRemove);
+		assert invariant();
 	}
 
 	public Set<SoundClip> getSoundClips() {
@@ -65,6 +79,7 @@ public class Album {
 		assert toAdd != null;
 		soundClips.add(toAdd);
 		assert soundClips.contains(toAdd);
+		assert invariant();
 	}
 
 	// Tar bort ett ljudklipp ur detta album.
@@ -72,5 +87,11 @@ public class Album {
 		assert toRemove != null;
 		soundClips.remove(toRemove);
 		assert !soundClips.contains(toRemove);
+		assert invariant();
+	}
+	
+	@Override
+	public String toString() {
+		return name;
 	}
 }
