@@ -75,8 +75,7 @@ public class MusicOrganizerController {
 		for (int i=0; i < test.length; i++) {
 			SoundClip toAdd = new SoundClip(test[i]);
 			root.addSoundClip(toAdd);
-		}
-		
+		}		
 	}
 	
 	/**

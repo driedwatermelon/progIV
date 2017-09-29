@@ -21,17 +21,6 @@ public class AlbumTest {
 		assertEquals("Album 2", testAlbum.getName());
 	}
 	
-	// Testar att man kan lägga till ett parent-album för ett album.
-	@Test
-	public void testSetParent() {
-		Album testAlbum1 = new Album("Album 1");
-		Album testAlbum2 = new Album("Album 2");
-		
-		assert testAlbum2.getParent() == null; // kollar först att testAlbum2 inte har en parent
-		testAlbum2.setParent(testAlbum1); // lägger till en parent
-		assert testAlbum2.getParent() == testAlbum1; // kolla att det fungerade
-	}
-	
 	// Testar att man kan lägga till och ta bort subalbum.
 	@Test
 	public void testAddRemoveSubalbum() {
