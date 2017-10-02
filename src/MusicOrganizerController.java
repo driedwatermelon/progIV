@@ -54,15 +54,14 @@ public class MusicOrganizerController {
 
 		// Set Album title, create a new Album and designate root folder.
 		String name = view.promptForAlbumName();
-		if (name == null||name.equals("")) return;
+		if (name == null||name.trim().isEmpty()) return;
 		Album newAlbum = new Album(name);
 		Album selectedAlbum = view.getSelectedAlbum();
 		if (selectedAlbum != null) {
-			selectedAlbum.addSubAlbum(newAlbum);
+			if (selectedAlbum.addSubAlbum(newAlbum)) view.onAlbumAdded(newAlbum);
 		} else {
-			root.addSubAlbum(newAlbum);
+			if (root.addSubAlbum(newAlbum)) view.onAlbumAdded(newAlbum);
 		}
-		view.onAlbumAdded(newAlbum);
 	}
 
 	/**
@@ -70,8 +69,10 @@ public class MusicOrganizerController {
 	 */
 	public void deleteAlbum() { // TODO Update parameters if needed
 		// TODO: Add your code here
+		// Delete the currently selected album and it's subalbums.
 		Album toDelete = view.getSelectedAlbum();
-		root.removeSubAlbum(toDelete);
+		if (toDelete == null || toDelete == root) return;		
+		toDelete.getParent().removeSubAlbum(toDelete);
 		view.onAlbumRemoved(toDelete); 
 	}
 
@@ -82,10 +83,8 @@ public class MusicOrganizerController {
 		
 		// Set parent album
 		Album selectedAlbum = view.getSelectedAlbum();
-		if (selectedAlbum != null) {} else {
-			selectedAlbum = root;
-		}
-
+		if (selectedAlbum == null) selectedAlbum = root;
+		
 		// Initiate a filechooser instance.
 		JFileChooser chooser = new JFileChooser();
 		chooser.setMultiSelectionEnabled(true);
@@ -94,11 +93,11 @@ public class MusicOrganizerController {
 		chooser.showOpenDialog(view);
 
 		// Retrieve the selected files.
-		File[] test = chooser.getSelectedFiles();
+		File[] soundClips = chooser.getSelectedFiles();
 
 		// Add the selected files to the root album.
-		for (int i = 0; i < test.length; i++) {
-			SoundClip toAdd = new SoundClip(test[i]);
+		for (int i = 0; i < soundClips.length; i++) {
+			SoundClip toAdd = new SoundClip(soundClips[i]);
 			selectedAlbum.addSoundClip(toAdd);
 		}
 		view.onClipsUpdated();
@@ -113,9 +112,7 @@ public class MusicOrganizerController {
 		// Get the list of selected sound clips.
 		List<SoundClip> l = view.getSelectedSoundClips();
 		Album selectedAlbum = view.getSelectedAlbum();
-		if (selectedAlbum != null) {} else {
-			selectedAlbum = root;
-		}
+		if (selectedAlbum == null) return;
 
 		// Loop through the list and remove them from the Album one by one.
 		for (int i = 0; i < l.size(); i++) {
@@ -123,7 +120,6 @@ public class MusicOrganizerController {
 		}
 		
 		view.onClipsUpdated();
-
 	}
 
 	/**

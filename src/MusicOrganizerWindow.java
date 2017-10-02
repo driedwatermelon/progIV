@@ -91,6 +91,8 @@ public class MusicOrganizerWindow extends JFrame {
 					
 					// TODO YOUR CODE HERE
 					// The code here gets invoked whenever the user double clicks in the album tree
+					
+					// show contents of album
 					clipTable.display((Album) getSelectedTreeNode().getUserObject());				
 					System.out.println("show the sound clips for album " + getSelectedTreeNode().getUserObject());
 				}
@@ -114,6 +116,8 @@ public class MusicOrganizerWindow extends JFrame {
 					
 					// TODO YOUR CODE HERE
 					// The code here gets invoked whenever the uses double clicks on the list of sound clips
+					
+					// play soundclip
 					controller.playSoundClips();
 					System.out.println("clicked on clipTable");				
 				}

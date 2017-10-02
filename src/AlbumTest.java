@@ -14,12 +14,14 @@ public class AlbumTest {
 	}
 	
 	// Testar att man kan ändra namnet på ett Album med setName-metoden.
+	/*
 	@Test
 	public void testSetName() {
 		Album testAlbum = new Album("Album 1");
 		testAlbum.setName("Album 2");
 		assertEquals("Album 2", testAlbum.getName());
 	}
+	*/
 	
 	// Testar att man kan lägga till och ta bort subalbum.
 	@Test

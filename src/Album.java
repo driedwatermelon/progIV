@@ -4,7 +4,7 @@ import java.util.Set;
 
 public class Album {
 
-	private String name;
+	private final String name;
 	private Album parentAlbum = null;
 	private Set<SoundClip> soundClips = new HashSet<>();
 	private Set<Album> subAlbums = new HashSet<>();
@@ -31,13 +31,6 @@ public class Album {
 	public String getName() {
 		return name;
 	}
-	
-	public void setName(String name) {
-		assert name != null;
-		assert !name.isEmpty();
-		this.name = name;
-		assert invariant();
-	}
 
 	public Album getParent() {
 		return parentAlbum;
@@ -54,21 +47,22 @@ public class Album {
 	}
 
 	// Lägger till ett sub-album i detta album.
-	public void addSubAlbum(Album toAdd) {
+	public boolean addSubAlbum(Album toAdd) {
 		assert toAdd != null;
-		subAlbums.add(toAdd);
+		if (!subAlbums.add(toAdd)) return false;
 		toAdd.setParent(this);
 		assert subAlbums.contains(toAdd);
 		assert invariant();
+		return true;
 	}
 
 	// Tar bort ett sub-album ur detta album.
-	public void removeSubAlbum(Album toRemove) {
+	public boolean removeSubAlbum(Album toRemove) {
 		assert toRemove != null;
 		toRemove.setParent(null);
-		subAlbums.remove(toRemove);
-		assert !subAlbums.contains(toRemove);
-		assert invariant();
+		return subAlbums.remove(toRemove);
+		//assert !subAlbums.contains(toRemove);
+		//assert invariant();
 	}
 
 	public Set<SoundClip> getSoundClips() {
@@ -94,5 +88,27 @@ public class Album {
 	@Override
 	public String toString() {
 		return name;
+	}
+	
+	@Override
+	public int hashCode() {
+		return name.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object otherAlbum) {
+		if (otherAlbum == null) return false;
+		if (otherAlbum == this) return true;
+		if (otherAlbum instanceof Album) {
+			return ((Album) otherAlbum).getName().equals(this.name);
+		}
+		return false;
+	}
+	
+	public void printSubAlbums() {
+		for (Album a : subAlbums) {
+			System.out.print(a + ", ");
+		}
+		System.out.println();
 	}
 }
