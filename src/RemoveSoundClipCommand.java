@@ -3,7 +3,6 @@ public class RemoveSoundClipCommand implements Command {
 	
 	private Album album;
 	private SoundClip soundClip;
-	private MusicOrganizerWindow view;
 	
 	public RemoveSoundClipCommand(Album album, SoundClip soundClip) {
 		this.album = album;

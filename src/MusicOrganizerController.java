@@ -1,5 +1,5 @@
 import java.io.File;
-
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -59,9 +59,8 @@ public class MusicOrganizerController {
 		if (selectedAlbum == null) selectedAlbum = root;
 		
 		if (!selectedAlbum.containsAlbum(newAlbum)) {
-			commandManager.addCommand(new AddAlbumCommand(selectedAlbum, newAlbum));
+			commandManager.addCommand(new AddAlbumCommand(selectedAlbum, newAlbum, view));
 			commandManager.clearRedos();
-			view.onAlbumAdded(newAlbum);
 		}
 		
 		/*
@@ -81,8 +80,7 @@ public class MusicOrganizerController {
 		Album toDelete = view.getSelectedAlbum();
 		if (toDelete == null || toDelete == root) return;		
 		//toDelete.getParent().removeSubAlbum(toDelete);
-		commandManager.addCommand(new RemoveAlbumCommand(toDelete.getParent(), toDelete));
-		view.onAlbumRemoved(toDelete); 
+		commandManager.addCommand(new RemoveAlbumCommand(toDelete.getParent(), toDelete, view));
 	}
 
 	/**
@@ -105,11 +103,13 @@ public class MusicOrganizerController {
 		File[] soundClips = chooser.getSelectedFiles();
 
 		// Add the selected files to the root album.
+		List<Command> commandList = new LinkedList<>();
 		for (int i = 0; i < soundClips.length; i++) {
 			SoundClip toAdd = new SoundClip(soundClips[i]);
 			//selectedAlbum.addSoundClip(toAdd);
-			commandManager.addCommand(new AddSoundClipCommand(selectedAlbum, toAdd));
+			commandList.add(new AddSoundClipCommand(selectedAlbum, toAdd));
 		}
+		commandManager.addCommandList(commandList);
 		commandManager.clearRedos();
 		view.onClipsUpdated();
 	}
@@ -126,10 +126,12 @@ public class MusicOrganizerController {
 		if (selectedAlbum == null) return;
 
 		// Loop through the list and remove them from the Album one by one.
+		List<Command> commandList = new LinkedList<>();
 		for (int i = 0; i < l.size(); i++) {
 			//selectedAlbum.removeSoundClip(l.get(i));
-			commandManager.addCommand(new RemoveSoundClipCommand(selectedAlbum, l.get(i)));
+			commandList.add(new RemoveSoundClipCommand(selectedAlbum, l.get(i)));
 		}
+		commandManager.addCommandList(commandList);
 		commandManager.clearRedos();
 		view.onClipsUpdated();
 	}

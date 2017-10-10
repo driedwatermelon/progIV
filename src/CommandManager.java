@@ -1,17 +1,25 @@
 
 import java.util.Stack;
+import java.util.List;
+import java.util.LinkedList;
 
 public class CommandManager {
 	
-	private Stack<Command> undoable = new Stack<Command>();
-	private Stack<Command> redoable = new Stack<Command>();
+	private Stack<List<Command>> undoable = new Stack<>();
+	private Stack<List<Command>> redoable = new Stack<>();
 	
 	public CommandManager() {
 		
 	}
 	
 	public void addCommand(Command command) {
-		undoable.push(command);
+		List<Command> commandList = new LinkedList<>();
+		commandList.add(command);
+		undoable.add(commandList);
+	}
+	
+	public void addCommandList(List<Command> commands) {
+		undoable.add(commands);
 	}
 	
 	public boolean undoPossible() {
@@ -28,17 +36,23 @@ public class CommandManager {
 	
 	public void undoLast() {
 		if (undoPossible()) {
-			Command lastCommand = undoable.pop();
-			lastCommand.undo();
-			redoable.push(lastCommand);
+			List<Command> commandList = new LinkedList<>();
+			for (Command command : undoable.pop()) {
+				command.undo();
+				commandList.add(command);
+			}
+			redoable.push(commandList);
 		}
 	}
 	
 	public void redoLast() {
 		if (redoPossible()) {
-			Command lastCommand = redoable.pop();
-			lastCommand.execute();
-			undoable.push(lastCommand);
+			List<Command> commandList = new LinkedList<>();
+			for (Command command : redoable.pop()) {
+				command.execute();
+				commandList.add(command);
+			}
+			undoable.push(commandList);
 		}
 	}
 }
