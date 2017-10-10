@@ -3,11 +3,12 @@ public class AddSoundClipCommand implements Command {
 	
 	private Album album;
 	private SoundClip soundClip;
+	private MusicOrganizerWindow view;
 	
 	public AddSoundClipCommand(Album album, SoundClip soundClip) {
 		this.album = album;
 		this.soundClip = soundClip;
-		//execute();
+		execute();
 	}
 
 	public void execute() {

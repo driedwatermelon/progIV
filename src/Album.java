@@ -111,6 +111,10 @@ public class Album {
 		return false;
 	}
 	
+	public boolean containsAlbum(Album subAlbum) {
+		return subAlbums.contains(subAlbum);
+	}
+	
 	public void printSubAlbums() {
 		for (Album a : subAlbums) {
 			System.out.print(a + ", ");

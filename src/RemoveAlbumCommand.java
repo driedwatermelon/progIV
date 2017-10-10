@@ -3,11 +3,12 @@ public class RemoveAlbumCommand implements Command {
 	
 	private Album parent;
 	private Album toRemove;
+	private MusicOrganizerWindow view;
 	
 	public RemoveAlbumCommand(Album parent, Album toRemove) {
 		this.parent = parent;
 		this.toRemove = toRemove;
-		//execute();
+		execute();
 	}
 	
 	public void execute() {

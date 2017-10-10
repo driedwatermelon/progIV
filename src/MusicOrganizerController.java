@@ -11,6 +11,7 @@ public class MusicOrganizerController {
 	private MusicOrganizerWindow view;
 	private SoundClipBlockingQueue queue;
 	private Album root;
+	private CommandManager commandManager;
 
 	public MusicOrganizerController() {
 
@@ -21,6 +22,8 @@ public class MusicOrganizerController {
 
 		// Create the blocking queue
 		queue = new SoundClipBlockingQueue();
+		
+		commandManager = new CommandManager();
 
 		// Create a separate thread for the sound clip player and start it
 		(new Thread(new SoundClipPlayer(queue))).start();
@@ -53,11 +56,21 @@ public class MusicOrganizerController {
 		if (name == null||name.trim().isEmpty()) return;
 		Album newAlbum = new Album(name);
 		Album selectedAlbum = view.getSelectedAlbum();
+		if (selectedAlbum == null) selectedAlbum = root;
+		
+		if (!selectedAlbum.containsAlbum(newAlbum)) {
+			commandManager.addCommand(new AddAlbumCommand(selectedAlbum, newAlbum));
+			commandManager.clearRedos();
+			view.onAlbumAdded(newAlbum);
+		}
+		
+		/*
 		if (selectedAlbum != null) {
 			if (selectedAlbum.addSubAlbum(newAlbum)) view.onAlbumAdded(newAlbum);
 		} else {
 			if (root.addSubAlbum(newAlbum)) view.onAlbumAdded(newAlbum);
 		}
+		*/	
 	}
 
 	/**
@@ -67,7 +80,8 @@ public class MusicOrganizerController {
 		// Delete the currently selected album and it's subalbums.
 		Album toDelete = view.getSelectedAlbum();
 		if (toDelete == null || toDelete == root) return;		
-		toDelete.getParent().removeSubAlbum(toDelete);
+		//toDelete.getParent().removeSubAlbum(toDelete);
+		commandManager.addCommand(new RemoveAlbumCommand(toDelete.getParent(), toDelete));
 		view.onAlbumRemoved(toDelete); 
 	}
 
@@ -93,8 +107,10 @@ public class MusicOrganizerController {
 		// Add the selected files to the root album.
 		for (int i = 0; i < soundClips.length; i++) {
 			SoundClip toAdd = new SoundClip(soundClips[i]);
-			selectedAlbum.addSoundClip(toAdd);
+			//selectedAlbum.addSoundClip(toAdd);
+			commandManager.addCommand(new AddSoundClipCommand(selectedAlbum, toAdd));
 		}
+		commandManager.clearRedos();
 		view.onClipsUpdated();
 	}
 	
@@ -111,10 +127,19 @@ public class MusicOrganizerController {
 
 		// Loop through the list and remove them from the Album one by one.
 		for (int i = 0; i < l.size(); i++) {
-			selectedAlbum.removeSoundClip(l.get(i));
+			//selectedAlbum.removeSoundClip(l.get(i));
+			commandManager.addCommand(new RemoveSoundClipCommand(selectedAlbum, l.get(i)));
 		}
-		
+		commandManager.clearRedos();
 		view.onClipsUpdated();
+	}
+	
+	public void undo() {
+		commandManager.undoLast();
+	}
+	
+	public void redo() {
+		commandManager.redoLast();
 	}
 
 	/**
