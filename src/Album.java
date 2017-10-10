@@ -73,6 +73,7 @@ public class Album {
 	public void addSoundClip(SoundClip toAdd) {
 		assert toAdd != null;
 		soundClips.add(toAdd);
+		if (parentAlbum != null) parentAlbum.addSoundClip(toAdd);
 		assert soundClips.contains(toAdd);
 		assert invariant();
 	}
@@ -81,6 +82,11 @@ public class Album {
 	public void removeSoundClip(SoundClip toRemove) {
 		assert toRemove != null;
 		soundClips.remove(toRemove);
+		if (!subAlbums.isEmpty()) {
+			for (Album album : subAlbums) {
+				album.removeSoundClip(toRemove);
+			}
+		}
 		assert !soundClips.contains(toRemove);
 		assert invariant();
 	}
