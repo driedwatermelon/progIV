@@ -34,7 +34,7 @@ public class MusicOrganizerWindow extends JFrame {
 		controller = contr;
 		
 		// make the row of buttons
-		buttonPanel = new MusicOrganizerButtonPanel(controller, this);
+		buttonPanel = new MusicOrganizerButtonPanel(controller);
 		
 		// make the album tree
 		albumTree = makeCatalogTree();
@@ -206,6 +206,7 @@ public class MusicOrganizerWindow extends JFrame {
 						parent.getChildCount());
 				albumTree.scrollPathToVisible(new TreePath(trnode.getPath()));
 				
+				albumTree.setSelectionPath(new TreePath(trnode.getPath()));
 			}
 		}
 	}
@@ -237,4 +238,12 @@ public class MusicOrganizerWindow extends JFrame {
 		Album a = (Album) getSelectedTreeNode().getUserObject();
 		clipTable.display(a);
 	}
-}
+	
+	public void setUndoEnabled(boolean state) {
+		buttonPanel.setUndoEnable(state);
+	}
+	
+	public void setRedoEnabled(boolean state) {
+		buttonPanel.setRedoEnabled(state);
+	}
+ }

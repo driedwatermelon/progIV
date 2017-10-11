@@ -8,10 +8,6 @@ public class CommandManager {
 	private Stack<List<Command>> undoable = new Stack<>();
 	private Stack<List<Command>> redoable = new Stack<>();
 	
-	public CommandManager() {
-		
-	}
-	
 	public void addCommand(Command command) {
 		List<Command> commandList = new LinkedList<>();
 		commandList.add(command);

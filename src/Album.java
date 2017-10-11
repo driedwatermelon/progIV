@@ -112,7 +112,10 @@ public class Album {
 	}
 	
 	public boolean containsAlbum(Album subAlbum) {
-		return subAlbums.contains(subAlbum);
+		for (Album album : subAlbums) {
+			return subAlbums.contains(subAlbum) || album.containsAlbum(subAlbum);
+		}
+		return false;
 	}
 	
 	public void printSubAlbums() {

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 
 public class MusicOrganizerController {
 
@@ -27,6 +26,8 @@ public class MusicOrganizerController {
 
 		// Create a separate thread for the sound clip player and start it
 		(new Thread(new SoundClipPlayer(queue))).start();
+		
+		updateUndoRedoEnabled();
 	}
 
 	/**
@@ -58,18 +59,11 @@ public class MusicOrganizerController {
 		Album selectedAlbum = view.getSelectedAlbum();
 		if (selectedAlbum == null) selectedAlbum = root;
 		
-		if (!selectedAlbum.containsAlbum(newAlbum)) {
+		if (!root.containsAlbum(newAlbum)) {
 			commandManager.addCommand(new AddAlbumCommand(selectedAlbum, newAlbum, view));
 			commandManager.clearRedos();
 		}
-		
-		/*
-		if (selectedAlbum != null) {
-			if (selectedAlbum.addSubAlbum(newAlbum)) view.onAlbumAdded(newAlbum);
-		} else {
-			if (root.addSubAlbum(newAlbum)) view.onAlbumAdded(newAlbum);
-		}
-		*/	
+		updateUndoRedoEnabled();
 	}
 
 	/**
@@ -81,6 +75,8 @@ public class MusicOrganizerController {
 		if (toDelete == null || toDelete == root) return;		
 		//toDelete.getParent().removeSubAlbum(toDelete);
 		commandManager.addCommand(new RemoveAlbumCommand(toDelete.getParent(), toDelete, view));
+		commandManager.clearRedos();
+		updateUndoRedoEnabled();
 	}
 
 	/**
@@ -107,11 +103,11 @@ public class MusicOrganizerController {
 		for (int i = 0; i < soundClips.length; i++) {
 			SoundClip toAdd = new SoundClip(soundClips[i]);
 			//selectedAlbum.addSoundClip(toAdd);
-			commandList.add(new AddSoundClipCommand(selectedAlbum, toAdd));
+			commandList.add(new AddSoundClipCommand(selectedAlbum, toAdd, view));
 		}
 		commandManager.addCommandList(commandList);
 		commandManager.clearRedos();
-		view.onClipsUpdated();
+		updateUndoRedoEnabled();
 	}
 	
 
@@ -129,19 +125,26 @@ public class MusicOrganizerController {
 		List<Command> commandList = new LinkedList<>();
 		for (int i = 0; i < l.size(); i++) {
 			//selectedAlbum.removeSoundClip(l.get(i));
-			commandList.add(new RemoveSoundClipCommand(selectedAlbum, l.get(i)));
+			commandList.add(new RemoveSoundClipCommand(selectedAlbum, l.get(i), view));
 		}
 		commandManager.addCommandList(commandList);
 		commandManager.clearRedos();
-		view.onClipsUpdated();
+		updateUndoRedoEnabled();
 	}
 	
 	public void undo() {
 		commandManager.undoLast();
+		updateUndoRedoEnabled();
 	}
 	
 	public void redo() {
 		commandManager.redoLast();
+		updateUndoRedoEnabled();
+	}
+	
+	private void updateUndoRedoEnabled() {
+		view.setUndoEnabled(commandManager.undoPossible());
+		view.setRedoEnabled(commandManager.redoPossible());
 	}
 
 	/**

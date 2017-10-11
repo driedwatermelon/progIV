@@ -10,7 +10,6 @@ import javax.swing.JToolBar;
 public class MusicOrganizerButtonPanel extends JPanel {
 
 	private MusicOrganizerController controller;
-	private MusicOrganizerWindow view;
 	
 	private JButton newAlbumButton;
 	private JButton deleteAlbumButton;
@@ -21,13 +20,11 @@ public class MusicOrganizerButtonPanel extends JPanel {
 	private JButton redoButton;
 
 	
-	public MusicOrganizerButtonPanel(MusicOrganizerController contr, MusicOrganizerWindow view){
+	public MusicOrganizerButtonPanel(MusicOrganizerController contr){
 		super(new BorderLayout());
 
 		controller = contr;
-		
-		this.view = view;
-		
+				
 		JToolBar toolbar = new JToolBar();
 		
 		newAlbumButton = createNewAlbumButton();
@@ -149,5 +146,13 @@ public class MusicOrganizerButtonPanel extends JPanel {
 			}
 		});
 		return redoButton;
+	}
+	
+	public void setUndoEnable(boolean state) {
+		undoButton.setEnabled(state);
+	}
+	
+	public void setRedoEnabled(boolean state) {
+		redoButton.setEnabled(state);
 	}
 }
