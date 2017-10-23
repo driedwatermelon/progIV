@@ -163,7 +163,7 @@ public class MusicOrganizerController {
 		// Loop through the list and flag the sound-clips one by one.
 		List<Command> commandList = new LinkedList<>();
 		for (int i = 0; i < l.size(); i++) {
-			commandList.add(new ToggleFlagCommand(l.get(i), view));
+			commandList.add(new ToggleFlagCommand(l.get(i), view, flaggedSounds));
 		}
 		commandManager.addCommandList(commandList);
 		commandManager.clearRedos();
@@ -187,7 +187,7 @@ public class MusicOrganizerController {
 		
 		List<Command> commandList = new LinkedList<>();
 		for (int i = 0; i < l.size(); i++) {
-			commandList.add(new RateSoundClipCommand(l.get(i), view, rating));
+			commandList.add(new RateSoundClipCommand(l.get(i), view, rating, greatSounds));
 		}
 		commandManager.addCommandList(commandList);
 		commandManager.clearRedos();
