@@ -7,6 +7,8 @@ import java.io.File;
 public class SoundClip {
 
 	private final File file;
+	private boolean flagged = false;
+	private int rating = -1;
 	
 	/**
 	 * Make a SoundClip from a file.
@@ -25,7 +27,9 @@ public class SoundClip {
 	}
 	
 	public String toString(){
-		return file.getName();
+		String flag = flagged ? " F" : "";
+		String rating = this.rating != -1 ? " " + this.rating + "/5" : "";
+		return file.getName() + flag + rating;
 	}
 	
 	@Override
@@ -38,5 +42,22 @@ public class SoundClip {
 	@Override
 	public int hashCode() {
 		return file.hashCode();
+	}
+	
+	public void flagToggle() {
+		flagged = !flagged;
+	}
+	
+	public void setRating(int newRating) {
+		if (newRating < -1 || newRating > 5) return;
+		rating = newRating;
+	}
+	
+	public boolean isFlagged() {
+		return flagged;
+	}
+	
+	public int getRating() {
+		return rating;
 	}
 }

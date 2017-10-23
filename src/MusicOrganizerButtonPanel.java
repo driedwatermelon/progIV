@@ -18,6 +18,8 @@ public class MusicOrganizerButtonPanel extends JPanel {
 	private JButton playButton;
 	private JButton undoButton;
 	private JButton redoButton;
+	private JButton flagButton;
+	private JButton rateButton;
 
 	
 	public MusicOrganizerButtonPanel(MusicOrganizerController contr){
@@ -47,6 +49,12 @@ public class MusicOrganizerButtonPanel extends JPanel {
 		
 		redoButton = createRedoButton();
 		toolbar.add(redoButton);
+		
+		flagButton = createFlagButton();
+		toolbar.add(flagButton);
+		
+		rateButton = createRateButton();
+		toolbar.add(rateButton);
 		
 		this.add(toolbar);
 	}
@@ -143,6 +151,28 @@ public class MusicOrganizerButtonPanel extends JPanel {
 		redoButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controller.redo();
+			}
+		});
+		return redoButton;
+	}
+	
+	private JButton createFlagButton() {
+		JButton redoButton = new JButton("Flag");
+		redoButton.setToolTipText("Flag the currently selected soundclips.");
+		redoButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.flag();
+			}
+		});
+		return redoButton;
+	}
+	
+	private JButton createRateButton() {
+		JButton redoButton = new JButton("Rate");
+		redoButton.setToolTipText("Rate the currently selected soundclips.");
+		redoButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.rate();
 			}
 		});
 		return redoButton;

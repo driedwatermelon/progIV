@@ -79,9 +79,9 @@ public class MusicOrganizerWindow extends JFrame {
 										// expanding/collapsing
 
 		DefaultTreeSelectionModel selectionModel = new DefaultTreeSelectionModel();
-		selectionModel
-				.setSelectionMode(DefaultTreeSelectionModel.SINGLE_TREE_SELECTION);
-		tree.setSelectionModel(selectionModel);
+		selectionModel.setSelectionMode(DefaultTreeSelectionModel.SINGLE_TREE_SELECTION);
+		tree.setSelectionModel(selectionModel);	
+		tree.setSelectionPath(new TreePath(tree_root.getPath()));
 
 		tree.addMouseListener(new MouseInputAdapter() {
 			@Override

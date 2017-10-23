@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 public class MusicOrganizerController {
 
@@ -11,6 +12,8 @@ public class MusicOrganizerController {
 	private SoundClipBlockingQueue queue;
 	private Album root;
 	private CommandManager commandManager;
+	private FlaggedSoundsAlbum flaggedSounds;
+	private GreatSoundsAlbum greatSounds;
 
 	public MusicOrganizerController() {
 
@@ -23,6 +26,14 @@ public class MusicOrganizerController {
 		queue = new SoundClipBlockingQueue();
 		
 		commandManager = new CommandManager();
+		
+		flaggedSounds = new FlaggedSoundsAlbum("Flagged Sound Clips");
+		root.addSubAlbum(flaggedSounds);
+		view.onAlbumAdded(flaggedSounds);
+		
+		greatSounds = new GreatSoundsAlbum("Great Sound Clips");
+		root.addSubAlbum(greatSounds);
+		view.onAlbumAdded(greatSounds);
 
 		// Create a separate thread for the sound clip player and start it
 		(new Thread(new SoundClipPlayer(queue))).start();
@@ -53,11 +64,13 @@ public class MusicOrganizerController {
 	public void addNewAlbum() { 
 
 		// Set Album title, create a new Album and designate root folder.
+		Album selectedAlbum = view.getSelectedAlbum();
+		if (selectedAlbum instanceof SearchBasedAlbum) return;
+			
 		String name = view.promptForAlbumName();
 		if (name == null||name.trim().isEmpty()) return;
 		Album newAlbum = new Album(name);
-		Album selectedAlbum = view.getSelectedAlbum();
-		if (selectedAlbum == null) selectedAlbum = root;
+		
 		
 		if (!root.containsAlbum(newAlbum)) {
 			commandManager.addCommand(new AddAlbumCommand(selectedAlbum, newAlbum, view));
@@ -72,8 +85,8 @@ public class MusicOrganizerController {
 	public void deleteAlbum() { 
 		// Delete the currently selected album and it's subalbums.
 		Album toDelete = view.getSelectedAlbum();
-		if (toDelete == null || toDelete == root) return;		
-		//toDelete.getParent().removeSubAlbum(toDelete);
+		if (toDelete == null || toDelete == root || toDelete instanceof SearchBasedAlbum) return;
+		
 		commandManager.addCommand(new RemoveAlbumCommand(toDelete.getParent(), toDelete, view));
 		commandManager.clearRedos();
 		updateUndoRedoEnabled();
@@ -86,7 +99,7 @@ public class MusicOrganizerController {
 		
 		// Set parent album
 		Album selectedAlbum = view.getSelectedAlbum();
-		if (selectedAlbum == null) selectedAlbum = root;
+		if (selectedAlbum instanceof SearchBasedAlbum) return;
 		
 		// Initiate a filechooser instance.
 		JFileChooser chooser = new JFileChooser();
@@ -115,16 +128,16 @@ public class MusicOrganizerController {
 	 * Removes sound clips from an album
 	 */
 	public void removeSoundClips() { 
+		
+		Album selectedAlbum = view.getSelectedAlbum();
+		if (selectedAlbum instanceof SearchBasedAlbum) return;
 
 		// Get the list of selected sound clips.
 		List<SoundClip> l = view.getSelectedSoundClips();
-		Album selectedAlbum = view.getSelectedAlbum();
-		if (selectedAlbum == null) return;
 
 		// Loop through the list and remove them from the Album one by one.
 		List<Command> commandList = new LinkedList<>();
 		for (int i = 0; i < l.size(); i++) {
-			//selectedAlbum.removeSoundClip(l.get(i));
 			commandList.add(new RemoveSoundClipCommand(selectedAlbum, l.get(i), view));
 		}
 		commandManager.addCommandList(commandList);
@@ -139,6 +152,45 @@ public class MusicOrganizerController {
 	
 	public void redo() {
 		commandManager.redoLast();
+		updateUndoRedoEnabled();
+	}
+	
+	public void flag() {	
+		// Get the list of selected sound clips.
+		List<SoundClip> l = view.getSelectedSoundClips();
+		if (l.isEmpty()) return;
+		
+		// Loop through the list and flag the sound-clips one by one.
+		List<Command> commandList = new LinkedList<>();
+		for (int i = 0; i < l.size(); i++) {
+			commandList.add(new ToggleFlagCommand(l.get(i), view));
+		}
+		commandManager.addCommandList(commandList);
+		commandManager.clearRedos();
+		updateUndoRedoEnabled();
+	}
+	
+	public void rate() {
+		int rating = -1;
+		try {
+			rating = Integer.parseInt(JOptionPane.showInputDialog(
+					"What rating would you like to give the selected sound-clips (0-5) ?\n"
+					+ "You can remove the sound-clips rating altogether by entering -1.").trim());
+		} catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(null, "Please enter a number.");
+			return;
+		}
+		
+		// Get the list of selected sound clips.
+		List<SoundClip> l = view.getSelectedSoundClips();
+		if (l.isEmpty()) return;
+		
+		List<Command> commandList = new LinkedList<>();
+		for (int i = 0; i < l.size(); i++) {
+			commandList.add(new RateSoundClipCommand(l.get(i), view, rating));
+		}
+		commandManager.addCommandList(commandList);
+		commandManager.clearRedos();
 		updateUndoRedoEnabled();
 	}
 	
